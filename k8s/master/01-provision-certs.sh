@@ -3,6 +3,7 @@ set -e
 
 IFNAME=$1
 BASE_IP="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1 | cut -d "." -f1-3)"
+MASTER_ADDRESS="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
 
 mkdir -p ~/workspace
 cd ~/workspace
@@ -64,10 +65,9 @@ DNS.2 = kubernetes.default
 DNS.3 = kubernetes.default.svc
 DNS.4 = kubernetes.default.svc.cluster.local
 IP.1 = 10.96.0.1
-IP.2 = ${BASE_IP}.11
-IP.3 = ${BASE_IP}.12
-IP.4 = ${BASE_IP}.30
-IP.5 = 127.0.0.1
+IP.2 = ${MASTER_ADDRESS}.11
+IP.3 = ${BASE_IP}.30
+IP.4 = 127.0.0.1
 EOF
 
 openssl genrsa -out kube-apiserver.key 2048
@@ -86,9 +86,8 @@ basicConstraints = CA:FALSE
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 subjectAltName = @alt_names
 [alt_names]
-IP.1 = ${BASE_IP}.11
-IP.2 = ${BASE_IP}.12
-IP.3 = 127.0.0.1
+IP.1 = ${MASTER_ADDRESS}
+IP.2 = 127.0.0.1
 EOF
 
 openssl genrsa -out etcd-server.key 2048
