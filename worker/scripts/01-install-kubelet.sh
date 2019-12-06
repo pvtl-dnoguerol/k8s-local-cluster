@@ -21,6 +21,11 @@ mkdir -p \
 chmod +x kubectl kube-proxy kubelet
 mv kubectl kube-proxy kubelet /usr/local/bin/
 
+# Remove any extra newlines that are in the private key file
+chmod 600 /home/vagrant/.ssh/id_rsa
+dos2unix /home/vagrant/.ssh/id_rsa
+
+# Copy CA Cert from the master node
 scp -o "StrictHostKeyChecking no" -i /home/vagrant/.ssh/id_rsa vagrant@$MASTER_ADDRESS:/tmp/ca.crt /var/lib/kubernetes/ca.crt
 
 cat <<EOF | sudo tee /var/lib/kubelet/bootstrap-kubeconfig.yaml
