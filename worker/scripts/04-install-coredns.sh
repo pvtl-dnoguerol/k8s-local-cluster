@@ -2,9 +2,7 @@
 mkdir -p ~/workspace
 cd ~/workspace
 
-IFNAME=$1
-BASE_IP="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1 | cut -d "." -f1-3)"
-MASTER_ADDRESS=$BASE_IP.11
+MASTER_ADDRESS=$1
 
 # This technically does not need to run on the worker node nor does it need
 # to run more than once; it's done here as a workaround to trigger it after 

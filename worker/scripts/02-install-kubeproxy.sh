@@ -2,9 +2,8 @@
 mkdir -p ~/workspace
 cd ~/workspace
 
-IFNAME=$1
-BASE_IP="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1 | cut -d "." -f1-3)"
-MASTER_ADDRESS=$BASE_IP.11
+MASTER_ADDRESS=$1
+BASE_IP="$(echo $MASTER_ADDRESS | cut -d "." -f1-3)"
 
 scp -o "StrictHostKeyChecking no" -i /home/vagrant/.ssh/id_rsa vagrant@$MASTER_ADDRESS:/tmp/kube-proxy.kubeconfig /var/lib/kube-proxy/kubeconfig
 

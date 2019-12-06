@@ -2,9 +2,7 @@
 mkdir -p ~/workspace
 cd ~/workspace
 
-IFNAME=$1
-BASE_IP="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1 | cut -d "." -f1-3)"
-MASTER_ADDRESS=$BASE_IP.11
+MASTER_ADDRESS=$1
 WEAVE_VERSION=v0.7.5
 
 wget -q --https-only --timestamping https://github.com/containernetworking/plugins/releases/download/$WEAVE_VERSION/cni-plugins-amd64-$WEAVE_VERSION.tgz

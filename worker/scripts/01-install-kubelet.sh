@@ -2,9 +2,7 @@
 mkdir -p ~/workspace
 cd ~/workspace
 
-IFNAME=$1
-BASE_IP="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1 | cut -d "." -f1-3)"
-MASTER_ADDRESS=$BASE_IP.11
+MASTER_ADDRESS=$1
 VERSION=v1.13.0
 
 wget -q --https-only --timestamping \
