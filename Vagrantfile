@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   # config.vm.box = "base"
-  config.vm.box = "ubuntu/bionic64"
+  config.vm.box = "bento/ubuntu-16.04"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -64,7 +64,7 @@ Vagrant.configure("2") do |config|
     node.vm.network "forwarded_port", guest: 22, host: "#{2711}"
 
     node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh" do |s|
-      s.args = ["enp0s8"]
+      s.args = ["eth1"]
     end
 
     node.vm.provision "setup-dns", type: "shell", :path => "ubuntu/update-dns.sh"

@@ -13,3 +13,7 @@ cat >> /etc/hosts <<EOF
 192.168.5.21  worker-1
 192.168.5.22  worker-2
 EOF
+
+# disable swap
+swapoff -a
+sed -i '/ swap / s/^/#/' /etc/fstab

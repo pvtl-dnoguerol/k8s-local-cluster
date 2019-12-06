@@ -14,7 +14,7 @@ sudo mkdir -p /etc/etcd /var/lib/etcd
 
 sudo cp ca.crt etcd-server.key etcd-server.crt /etc/etcd/
 
-INTERNAL_IP=$(ip addr show enp0s8 | grep "inet " | awk '{print $2}' | cut -d / -f 1)
+INTERNAL_IP=$(ip addr show eth1 | grep "inet " | awk '{print $2}' | cut -d / -f 1)
 ETCD_NAME=$(hostname -s)
 
 cat <<EOF | sudo tee /etc/systemd/system/etcd.service

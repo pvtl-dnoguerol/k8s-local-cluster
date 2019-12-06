@@ -63,7 +63,6 @@ clusterDNS:
 resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
 rotateCertificates: true
-cgroupDriver: systemd
 EOF
 
 cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
@@ -84,7 +83,8 @@ ExecStart=/usr/local/bin/kubelet \\
   --rotate-server-certificates=true \\
   --network-plugin=cni \\
   --register-node=true \\
-  --v=2
+  --v=2 \\
+  --cgroup-driver=systemd
 Restart=on-failure
 RestartSec=5
 
