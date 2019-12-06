@@ -1,6 +1,8 @@
 #!/bin/bash
+set -e
 
-MASTER_ADDRESS=192.168.5.11
+IFNAME=$1
+MASTER_ADDRESS="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
 CLUSTER_NAME=local
 
 mkdir -p ~/workspace

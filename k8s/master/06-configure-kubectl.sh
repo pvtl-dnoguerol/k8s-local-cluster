@@ -1,15 +1,17 @@
 #!/bin/bash
+set -e
 
 mkdir -p ~/workspace
 cd ~/workspace
 
-MASTER_ADDRESS=192.168.5.11
+IFNAME=$1
+ADDRESS="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
 CLUSTER_NAME=local
 
 kubectl config set-cluster ${CLUSTER_NAME} \
   --certificate-authority=ca.crt \
   --embed-certs=true \
-  --server=https://${MASTER_ADDRESS}:6443
+  --server=https://${ADDRESS}:6443
 
 kubectl config set-credentials admin \
   --client-certificate=admin.crt \

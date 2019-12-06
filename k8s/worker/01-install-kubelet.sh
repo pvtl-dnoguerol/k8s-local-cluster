@@ -1,17 +1,18 @@
 #!/bin/bash
-
 mkdir -p ~/workspace
 cd ~/workspace
 
-MASTER_ADDRESS=192.168.5.11
+IFNAME=$1
+BASE_IP="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1 | cut -d "." -f1-3)"
+MASTER_ADDRESS=$BASE_IP.11
 VERSION=v1.13.0
 
-wget -q --show-progress --https-only --timestamping \
+wget -q --https-only --timestamping \
   https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
   https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kube-proxy \
   https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubelet
 
-sudo mkdir -p \
+mkdir -p \
   /etc/cni/net.d \
   /opt/cni/bin \
   /var/lib/kubelet \
@@ -20,9 +21,9 @@ sudo mkdir -p \
   /var/run/kubernetes
 
 chmod +x kubectl kube-proxy kubelet
-sudo mv kubectl kube-proxy kubelet /usr/local/bin/
+mv kubectl kube-proxy kubelet /usr/local/bin/
 
-sudo scp -o "StrictHostKeyChecking no" -i /home/vagrant/.ssh/id_rsa vagrant@$MASTER_ADDRESS:/tmp/ca.crt /var/lib/kubernetes/ca.crt
+scp -o "StrictHostKeyChecking no" -i /home/vagrant/.ssh/id_rsa vagrant@$MASTER_ADDRESS:/tmp/ca.crt /var/lib/kubernetes/ca.crt
 
 cat <<EOF | sudo tee /var/lib/kubelet/bootstrap-kubeconfig.yaml
 apiVersion: v1
@@ -93,6 +94,6 @@ WantedBy=multi-user.target
 EOF
 
 rm -rf /etc/systemd/system/kubelet.service.d
-sudo systemctl daemon-reload
-sudo systemctl enable kubelet
-sudo systemctl start kubelet
+systemctl daemon-reload
+systemctl enable kubelet
+systemctl start kubelet

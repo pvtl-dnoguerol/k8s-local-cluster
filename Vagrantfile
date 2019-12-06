@@ -73,12 +73,22 @@ Vagrant.configure("2") do |config|
     node.vm.provision "authorize-ssh-key", type: "shell", :path => "ubuntu/authorize-ssh-key.sh"
     node.vm.provision "install-docker", type: "shell", :path => "ubuntu/install-docker.sh"
     node.vm.provision "install-k8s", :type => "shell", :path => "ubuntu/install-k8s.sh"
-    node.vm.provision "k8s-provision-certs", :type => "shell", :path => "k8s/master/01-provision-certs.sh"
-    node.vm.provision "k8s-generate-kubeconfigs", :type => "shell", :path => "k8s/master/02-generate-kubeconfigs.sh"
+    node.vm.provision "k8s-provision-certs", :type => "shell", :path => "k8s/master/01-provision-certs.sh" do |s|
+      s.args = ["eth1"]
+    end
+    node.vm.provision "k8s-generate-kubeconfigs", :type => "shell", :path => "k8s/master/02-generate-kubeconfigs.sh" do |s|
+      s.args = ["eth1"]
+    end
     node.vm.provision "k8s-generate-encryption-key", :type => "shell", :path => "k8s/master/03-generate-encryption-key.sh"
-    node.vm.provision "k8s-install-etcd", :type => "shell", :path => "k8s/master/04-install-etcd.sh"
-    node.vm.provision "k8s-install-controlplane", :type => "shell", :path => "k8s/master/05-install-controlplane.sh"
-    node.vm.provision "k8s-configure-kubectl", :type => "shell", :path => "k8s/master/06-configure-kubectl.sh"
+    node.vm.provision "k8s-install-etcd", :type => "shell", :path => "k8s/master/04-install-etcd.sh" do |s|
+      s.args = ["eth1"]
+    end
+    node.vm.provision "k8s-install-controlplane", :type => "shell", :path => "k8s/master/05-install-controlplane.sh" do |s|
+      s.args = ["eth1"]
+    end
+    node.vm.provision "k8s-configure-kubectl", :type => "shell", :path => "k8s/master/06-configure-kubectl.sh" do |s|
+      s.args = ["eth1"]
+    end
     node.vm.provision "k8s-create-worker-bootstrap", :type => "shell", :path => "k8s/master/07-create-worker-bootstrap.sh"
     node.vm.provision "k8s-create-weave-start-script", :type => "shell", :path => "k8s/master/08-create-weave-start-script.sh"
     node.vm.provision "k8s-create-coredns-start-script", :type => "shell", :path => "k8s/master/09-create-coredns-start-script.sh"
@@ -99,7 +109,7 @@ Vagrant.configure("2") do |config|
 		    node.vm.network "forwarded_port", guest: 22, host: "#{2720 + i}"
 
         node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh" do |s|
-          s.args = ["enp0s8"]
+          s.args = ["eth1"]
         end
 
         node.vm.provision "setup-dns", type: "shell", :path => "ubuntu/update-dns.sh"
@@ -109,10 +119,18 @@ Vagrant.configure("2") do |config|
         node.vm.provision "install-docker", type: "shell", :path => "ubuntu/install-docker.sh"
         node.vm.provision "allow-bridge-nf-traffic", :type => "shell", :path => "ubuntu/allow-bridge-nf-traffic.sh"
         node.vm.provision "install-k8s", :type => "shell", :path => "ubuntu/install-k8s.sh"
-        node.vm.provision "k8s-install-kubelet", :type => "shell", :path => "k8s/worker/01-install-kubelet.sh"
-        node.vm.provision "k8s-install-kubeproxy", :type => "shell", :path => "k8s/worker/02-install-kubeproxy.sh"
-        node.vm.provision "k8s-install-weave", :type => "shell", :path => "k8s/worker/03-install-weave.sh"
-        node.vm.provision "k8s-install-coredns", :type => "shell", :path => "k8s/worker/04-install-coredns.sh"
+        node.vm.provision "k8s-install-kubelet", :type => "shell", :path => "k8s/worker/01-install-kubelet.sh" do |s|
+          s.args = ["eth1"]
+        end
+        node.vm.provision "k8s-install-kubeproxy", :type => "shell", :path => "k8s/worker/02-install-kubeproxy.sh" do |s|
+          s.args = ["eth1"]
+        end
+        node.vm.provision "k8s-install-weave", :type => "shell", :path => "k8s/worker/03-install-weave.sh" do |s|
+          s.args = ["eth1"]
+        end
+        node.vm.provision "k8s-install-coredns", :type => "shell", :path => "k8s/worker/04-install-coredns.sh" do |s|
+          s.args = ["eth1"]
+        end
 
     end
   end

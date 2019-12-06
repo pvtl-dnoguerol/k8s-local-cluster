@@ -1,17 +1,19 @@
 #!/bin/bash
+set -e
 
 mkdir -p ~/workspace
 cd ~/workspace
 
+IFNAME=$1
 VERSION=v1.13.0
 
 # Create k8s config directory
 
-sudo mkdir -p /etc/kubernetes/config
+mkdir -p /etc/kubernetes/config
 
 # Download release binaries
 
-wget -q --show-progress --https-only --timestamping \
+wget -q --https-only --timestamping \
   "https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kube-apiserver" \
   "https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kube-controller-manager" \
   "https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kube-scheduler" \
@@ -20,18 +22,20 @@ wget -q --show-progress --https-only --timestamping \
 # Install k8s binaries
 
 chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl
-sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
+mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
 
 # Configure k8s API server
 
-sudo mkdir -p /var/lib/kubernetes/
+mkdir -p /var/lib/kubernetes/
 
-sudo cp ca.crt ca.key kube-apiserver.crt kube-apiserver.key \
+cp ca.crt ca.key kube-apiserver.crt kube-apiserver.key \
   service-account.key service-account.crt \
   etcd-server.key etcd-server.crt \
   encryption-config.yaml /var/lib/kubernetes/
 
-INTERNAL_IP=$(ip addr show eth1 | grep "inet " | awk '{print $2}' | cut -d / -f 1)
+INTERNAL_IP="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
+BASE_IP="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1 | cut -d "." -f1-3)"
+CIDR=$BASE_IP".0/24"
 
 cat <<EOF | sudo tee /etc/systemd/system/kube-apiserver.service
 [Unit]
@@ -56,7 +60,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --etcd-cafile=/var/lib/kubernetes/ca.crt \\
   --etcd-certfile=/var/lib/kubernetes/etcd-server.crt \\
   --etcd-keyfile=/var/lib/kubernetes/etcd-server.key \\
-  --etcd-servers=https://192.168.5.11:2379,https://192.168.5.12:2379 \\
+  --etcd-servers=https://${INTERNAL_IP}:2379 \\
   --event-ttl=1h \\
   --encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \\
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.crt \\
@@ -79,7 +83,7 @@ EOF
 
 # Configure k8s Controller Manager
 
-sudo mv kube-controller-manager.kubeconfig /var/lib/kubernetes/
+mv kube-controller-manager.kubeconfig /var/lib/kubernetes/
 
 cat <<EOF | sudo tee /etc/systemd/system/kube-controller-manager.service
 [Unit]
@@ -89,7 +93,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 [Service]
 ExecStart=/usr/local/bin/kube-controller-manager \\
   --address=0.0.0.0 \\
-  --cluster-cidr=192.168.5.0/24 \\
+  --cluster-cidr=${CIDR} \\
   --cluster-name=kubernetes \\
   --cluster-signing-cert-file=/var/lib/kubernetes/ca.crt \\
   --cluster-signing-key-file=/var/lib/kubernetes/ca.key \\
@@ -109,7 +113,7 @@ EOF
 
 # Configure k8s Scheduler
 
-sudo mv kube-scheduler.kubeconfig /var/lib/kubernetes/
+mv kube-scheduler.kubeconfig /var/lib/kubernetes/
 
 cat <<EOF | sudo tee /etc/systemd/system/kube-scheduler.service
 [Unit]
@@ -131,6 +135,6 @@ EOF
 
 # Start controller services
 
-sudo systemctl daemon-reload
-sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
-sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
+systemctl daemon-reload
+systemctl enable kube-apiserver kube-controller-manager kube-scheduler
+systemctl start kube-apiserver kube-controller-manager kube-scheduler
