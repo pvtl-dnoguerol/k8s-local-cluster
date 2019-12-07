@@ -66,6 +66,10 @@ Vagrant.configure("2") do |config|
     node.vm.provision "setup-dns", type: "shell", :path => "../common/ubuntu/update-dns.sh"
     node.vm.provision "copy-ssh-private", type: "file", source: "../common/ssh/id_rsa", destination: "~/.ssh/id_rsa"
     node.vm.provision "copy-ssh-public", type: "file", source: "../common/ssh/id_rsa.pub", destination: "~/.ssh/id_rsa.pub"
+    node.vm.provision "copy-rubber-stamp-1", type: "file", source: "kubelet-rubber-stamp/operator.yaml", destination: "~/workspace/kubelet-rubber-stamp/operator.yaml"
+    node.vm.provision "copy-rubber-stamp-2", type: "file", source: "kubelet-rubber-stamp/role.yaml", destination: "~/workspace/kubelet-rubber-stamp/role.yaml"
+    node.vm.provision "copy-rubber-stamp-3", type: "file", source: "kubelet-rubber-stamp/role_binding.yaml", destination: "~/workspace/kubelet-rubber-stamp/role_binding.yaml"
+    node.vm.provision "copy-rubber-stamp-4", type: "file", source: "kubelet-rubber-stamp/service_account.yaml", destination: "~/workspace/kubelet-rubber-stamp/service_account.yaml"
     node.vm.provision "authorize-ssh-key", type: "shell", :path => "../common/ubuntu/authorize-ssh-key.sh"
     node.vm.provision "install-docker", type: "shell", :path => "../common/ubuntu/install-docker.sh"
     node.vm.provision "install-k8s", :type => "shell", :path => "../common/ubuntu/install-k8s.sh"
@@ -88,7 +92,8 @@ Vagrant.configure("2") do |config|
     node.vm.provision "k8s-create-worker-bootstrap", :type => "shell", :path => "scripts/07-create-worker-bootstrap.sh"
     node.vm.provision "k8s-create-weave-start-script", :type => "shell", :path => "scripts/08-create-weave-start-script.sh"
     node.vm.provision "k8s-create-coredns-start-script", :type => "shell", :path => "scripts/09-create-coredns-start-script.sh"
-    node.vm.provision "k8s-configure-kubeapi-perms", :type => "shell", :path => "scripts/10-configure-kubeapi-to-kubelet-perms.sh" do |s|
+    node.vm.provision "k8s-create-rubberstap-start-script", :type => "shell", :path => "scripts/10-create-rubberstamp-start-script.sh"
+    node.vm.provision "k8s-configure-kubeapi-perms", :type => "shell", :path => "scripts/11-configure-kubeapi-to-kubelet-perms.sh" do |s|
       s.args = ["#{IFNAME}"]
     end
 

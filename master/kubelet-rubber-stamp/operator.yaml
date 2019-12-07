@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubelet-rubber-stamp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: kubelet-rubber-stamp
+  template:
+    metadata:
+      labels:
+        name: kubelet-rubber-stamp
+    spec:
+      serviceAccountName: kubelet-rubber-stamp
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+      priorityClassName: system-cluster-critical
+      containers:
+        - name: kubelet-rubber-stamp
+          image: quay.io/kontena/kubelet-rubber-stamp-amd64:latest
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              value: ""
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "kubelet-rubber-stamp"

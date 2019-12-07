@@ -8,13 +8,6 @@ sed -e "s/^.*${HOSTNAME}.*/${ADDRESS} ${HOSTNAME} ${HOSTNAME}.local/" -i /etc/ho
 # remove ubuntu-bionic entry
 sed -e '/^.*ubuntu-bionic.*/d' -i /etc/hosts
 
-# Update /etc/hosts about other hosts
-cat >> /etc/hosts <<EOF
-$BASE_IP.11  master
-$BASE_IP.21  worker-1
-$BASE_IP.22  worker-2
-EOF
-
 # disable swap
 swapoff -a
 sed -i '/ swap / s/^/#/' /etc/fstab

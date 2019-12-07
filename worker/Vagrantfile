@@ -8,6 +8,7 @@ MASTER_IP = STDIN.gets.chomp
 # If this number is changed, remember to update setup-hosts.sh script with the new hosts IP details in /etc/hosts of each VM.
 NUM_WORKER_NODE = 2
 
+IFNAME = "eth1"
 IP_NW = "192.168.5."
 NODE_IP_START = 20
 
@@ -87,6 +88,12 @@ Vagrant.configure("2") do |config|
         end
         node.vm.provision "k8s-install-coredns", :type => "shell", :path => "scripts/04-install-coredns.sh" do |s|
           s.args = ["#{MASTER_IP}"]
+        end
+        node.vm.provision "k8s-install-rubberstamp", :type => "shell", :path => "scripts/05-install-rubberstamp.sh" do |s|
+          s.args = ["#{MASTER_IP}"]
+        end
+        node.vm.provision "k8s-add-hostname-to-master", :type => "shell", :path => "scripts/06-add-hostname-to-master.sh" do |s|
+          s.args = ["#{MASTER_IP}","#{IFNAME}"]
         end
 
     end
