@@ -67,7 +67,7 @@ Vagrant.configure("2") do |config|
 		    node.vm.network "forwarded_port", guest: 22, host: "#{2720 + i}"
 
         node.vm.provision "setup-hosts", :type => "shell", :path => "../common/ubuntu/vagrant/setup-hosts.sh" do |s|
-          s.args = ["#{MASTER_IP}"]
+          s.args = ["#{IFNAME}"]
         end
 
         node.vm.provision "setup-dns", type: "shell", :path => "../common/ubuntu/update-dns.sh"
