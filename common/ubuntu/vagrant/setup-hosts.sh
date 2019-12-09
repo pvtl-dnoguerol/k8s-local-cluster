@@ -11,3 +11,5 @@ sed -e '/^.*ubuntu-bionic.*/d' -i /etc/hosts
 # disable swap
 swapoff -a
 sed -i '/ swap / s/^/#/' /etc/fstab
+
+mkdir /mnt/disks
