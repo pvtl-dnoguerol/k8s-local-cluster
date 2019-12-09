@@ -3,7 +3,11 @@ mkdir -p ~/workspace
 cd ~/workspace
 
 MASTER_ADDRESS=$1
+IFNAME=$2
 BASE_IP="$(echo $MASTER_ADDRESS | cut -d "." -f1-3)"
+CIDR_NETWORK="$(sipcalc $IFNAME -i | grep 'Network address' | awk -F- '{print $2}' | sed 's/ //')"
+CIDR_MASK="$(sipcalc $IFNAME -i | grep -m 1 'Network mask (bits)' | awk -F- '{print $2}' | sed 's/ //')"
+CIDR="$CIDR_NETWORK/$CIDR_MASK"
 
 scp -o "StrictHostKeyChecking no" -i /home/vagrant/.ssh/id_rsa vagrant@$MASTER_ADDRESS:/tmp/kube-proxy.kubeconfig /var/lib/kube-proxy/kubeconfig
 
@@ -13,7 +17,7 @@ apiVersion: kubeproxy.config.k8s.io/v1alpha1
 clientConnection:
   kubeconfig: "/var/lib/kube-proxy/kubeconfig"
 mode: "iptables"
-clusterCIDR: "$BASE_IP.0/24"
+clusterCIDR: "$CIDR"
 EOF
 
 cat <<EOF | sudo tee /etc/systemd/system/kube-proxy.service
