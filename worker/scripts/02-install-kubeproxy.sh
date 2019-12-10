@@ -17,7 +17,7 @@ apiVersion: kubeproxy.config.k8s.io/v1alpha1
 clientConnection:
   kubeconfig: "/var/lib/kube-proxy/kubeconfig"
 mode: "iptables"
-clusterCIDR: "$CIDR"
+clusterCIDR: "100.64.0.0/16"
 EOF
 
 cat <<EOF | sudo tee /etc/systemd/system/kube-proxy.service

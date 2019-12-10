@@ -67,7 +67,7 @@ authorization:
   mode: Webhook
 clusterDomain: "cluster.local"
 clusterDNS:
-  - "10.96.0.10"
+  - "100.65.0.10"
 resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
 rotateCertificates: true
@@ -92,7 +92,6 @@ ExecStart=/usr/local/bin/kubelet \\
   --network-plugin=cni \\
   --register-node=true \\
   --v=2 \\
-  --pod-cidr=$CIDR \\
   --cgroup-driver=systemd
 Restart=on-failure
 RestartSec=5
