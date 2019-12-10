@@ -3,7 +3,11 @@ mkdir -p ~/workspace
 cd ~/workspace
 
 MASTER_ADDRESS=$1
+IFNAME=$2
 VERSION=v1.13.0
+CIDR_NETWORK="$(sipcalc $IFNAME -i | grep 'Network address' | awk -F- '{print $2}' | sed 's/ //')"
+CIDR_MASK="$(sipcalc $IFNAME -i | grep -m 1 'Network mask (bits)' | awk -F- '{print $2}' | sed 's/ //')"
+CIDR="$CIDR_NETWORK/$CIDR_MASK"
 
 wget -q --https-only --timestamping \
   https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
@@ -88,6 +92,7 @@ ExecStart=/usr/local/bin/kubelet \\
   --network-plugin=cni \\
   --register-node=true \\
   --v=2 \\
+  --pod-network-cidr=$CIDR \\
   --cgroup-driver=systemd
 Restart=on-failure
 RestartSec=5
