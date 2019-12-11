@@ -7,6 +7,3 @@ EOF
 apt-get update
 apt-get install -y kubelet=1.14.6-00 kubeadm=1.14.6-00 kubectl=1.14.6-00
 apt-mark hold kubelet kubeadm kubectl
-
-# Needed by some CNI plugins
-sysctl net.bridge.bridge-nf-call-iptables=1
