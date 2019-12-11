@@ -3,7 +3,7 @@
 mkdir -p ~/workspace
 cd ~/workspace
 
-cat > /tmp/coredns.yaml << EOF
+cat > coredns.yaml << EOF
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -162,7 +162,7 @@ metadata:
 spec:
   selector:
     k8s-app: kube-dns
-  clusterIP: 100.65.0.10
+  clusterIP: 10.32.0.10
   ports:
   - name: dns
     port: 53
@@ -172,9 +172,4 @@ spec:
     protocol: TCP
 EOF
 
-cat > /tmp/start-coredns.sh << EOF
-#!/bin/bash
-kubectl apply -f /tmp/coredns.yaml
-EOF
-
-chmod +x /tmp/start-coredns.sh
+kubectl apply -f coredns.yaml

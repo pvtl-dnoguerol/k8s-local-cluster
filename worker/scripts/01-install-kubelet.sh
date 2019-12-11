@@ -67,8 +67,8 @@ authorization:
   mode: Webhook
 clusterDomain: "cluster.local"
 clusterDNS:
-  - "100.65.0.10"
-resolvConf: "/run/systemd/resolve/resolv.conf"
+  - "10.32.0.10"
+podCIDR: "10.200.0.0/16"
 runtimeRequestTimeout: "15m"
 rotateCertificates: true
 EOF

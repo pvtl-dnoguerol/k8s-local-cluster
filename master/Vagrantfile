@@ -93,7 +93,7 @@ Vagrant.configure("2") do |config|
     node.vm.provision "k8s-install-flannel", :type => "shell", :path => "scripts/08-install-flannel.sh" do |s|
       s.args = ["#{IFNAME}"]
     end
-    node.vm.provision "k8s-create-coredns-start-script", :type => "shell", :path => "scripts/09-create-coredns-start-script.sh"
+    node.vm.provision "k8s-install-coredns", :type => "shell", :path => "scripts/09-install-coredns.sh"
     node.vm.provision "k8s-create-rubberstap-start-script", :type => "shell", :path => "scripts/10-create-rubberstamp-start-script.sh"
     node.vm.provision "k8s-configure-kubeapi-perms", :type => "shell", :path => "scripts/11-configure-kubeapi-to-kubelet-perms.sh"
     node.vm.provision "k8s-install-helm", :type => "shell", :path => "scripts/13-install-helm.sh"
