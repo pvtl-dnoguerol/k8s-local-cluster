@@ -4,9 +4,7 @@ mkdir -p ~/workspace
 cd ~/workspace
 
 # Create TLS secret
-openssl req -x509 -newkey rsa:2048 -nodes -days 365 -keyout tls.key -out tls.crt -subj '/CN=localhost'
-kubectl create secret tls tls-secret --cert=tls.crt --key=tls.key
-rm -v tls.crt tls.key
+kubectl create secret tls ingress-tls-secret --cert=tls.crt --key=tls.key
 
 # Create ingress controller namespace
 kubectl create ns ingress-controller
@@ -171,7 +169,7 @@ spec:
         image: quay.io/jcmoraisjr/haproxy-ingress
         args:
         - --default-backend-service=\$(POD_NAMESPACE)/ingress-default-backend
-        - --default-ssl-certificate=\$(POD_NAMESPACE)/tls-secret
+        - --default-ssl-certificate=\$(POD_NAMESPACE)/ingress-tls-secret
         - --configmap=\$(POD_NAMESPACE)/haproxy-ingress
         ports:
         - name: http
