@@ -96,7 +96,7 @@ Vagrant.configure("2") do |config|
       s.args = ["#{IFNAME}"]
     end
     node.vm.provision "k8s-install-coredns", :type => "shell", :path => "scripts/09-install-coredns.sh"
-    node.vm.provision "k8s-install-rubberstamp", :type => "shell", :path => "scripts/10-install-rubberstamp.sh"
+    node.vm.provision "k8s-create-approve-csr-script", :type => "shell", :path => "scripts/10-create-approve-csr-script.sh"
     node.vm.provision "k8s-configure-kubeapi-perms", :type => "shell", :path => "scripts/11-configure-kubeapi-to-kubelet-perms.sh"
     node.vm.provision "k8s-install-helm", :type => "shell", :path => "scripts/13-install-helm.sh"
     node.vm.provision "k8s-install-ingress", :type => "shell", :path => "scripts/14-install-ingress.sh"

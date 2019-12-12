@@ -3,11 +3,13 @@
 mkdir -p ~/workspace
 cd ~/workspace
 
-# Create TLS secret
-kubectl create secret tls ingress-tls-secret --cert=tls.crt --key=tls.key
-
 # Create ingress controller namespace
 kubectl create ns ingress-controller
+
+# Create TLS secret
+dos2unix /home/vagrant/workspace/tls.crt
+dos2unix /home/vagrant/workspace/tls.key
+kubectl create secret tls ingress-tls-secret --cert=/home/vagrant/workspace/tls.crt --key=/home/vagrant/workspace/tls.key -n ingress-controller
 
 # Create default backend for 404 responses
 kubectl run ingress-default-backend --namespace=ingress-controller --image=gcr.io/google_containers/defaultbackend:1.0 --port=8080 --limits=cpu=10m,memory=20Mi --expose
