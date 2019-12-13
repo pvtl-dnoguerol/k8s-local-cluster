@@ -71,10 +71,6 @@ Vagrant.configure("2") do |config|
     node.vm.provision "setup-dns", type: "shell", :path => "../common/ubuntu/update-dns.sh"
     node.vm.provision "copy-ssh-private", type: "file", source: "../common/ssh/id_rsa", destination: "~/.ssh/id_rsa"
     node.vm.provision "copy-ssh-public", type: "file", source: "../common/ssh/id_rsa.pub", destination: "~/.ssh/id_rsa.pub"
-    node.vm.provision "copy-rubber-stamp-1", type: "file", source: "kubelet-rubber-stamp/operator.yaml", destination: "~/workspace/kubelet-rubber-stamp/operator.yaml"
-    node.vm.provision "copy-rubber-stamp-2", type: "file", source: "kubelet-rubber-stamp/role.yaml", destination: "~/workspace/kubelet-rubber-stamp/role.yaml"
-    node.vm.provision "copy-rubber-stamp-3", type: "file", source: "kubelet-rubber-stamp/role_binding.yaml", destination: "~/workspace/kubelet-rubber-stamp/role_binding.yaml"
-    node.vm.provision "copy-rubber-stamp-4", type: "file", source: "kubelet-rubber-stamp/service_account.yaml", destination: "~/workspace/kubelet-rubber-stamp/service_account.yaml"
     node.vm.provision "copy-tls-private", type: "file", source: "tls/tls.key", destination: "~/workspace/tls.key"
     node.vm.provision "copy-tls-public", type: "file", source: "tls/tls.crt", destination: "~/workspace/tls.crt"
     node.vm.provision "authorize-ssh-key", type: "shell", :path => "../common/ubuntu/authorize-ssh-key.sh"
@@ -104,7 +100,8 @@ Vagrant.configure("2") do |config|
     node.vm.provision "k8s-create-approve-csr-script", :type => "shell", :path => "scripts/10-create-approve-csr-script.sh"
     node.vm.provision "k8s-configure-kubeapi-perms", :type => "shell", :path => "scripts/11-configure-kubeapi-to-kubelet-perms.sh"
     node.vm.provision "k8s-install-helm", :type => "shell", :path => "scripts/13-install-helm.sh"
-    node.vm.provision "k8s-install-ingress", :type => "shell", :path => "scripts/14-install-ingress.sh"
+    node.vm.provision "k8s-install-ingress", :type => "shell", :path => "scripts/14-install-nginx-ingress.sh"
+    node.vm.provision "k8s-install-harbor", :type => "shell", :path => "scripts/15-install-harbor.sh"
     node.vm.provision "k8s-print-ip", :type => "shell", :path => "scripts/16-print-ip.sh" do |s|
       s.args = ["#{IFNAME}"]
     end
